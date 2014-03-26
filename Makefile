@@ -1,4 +1,4 @@
-CFLAGS=-std=c99 -pedantic -Wall -Wextra -g
+CFLAGS := -std=c99 -pedantic -Wall -Wextra -g
 
 test: test.o bxml.o
 	gcc -o $@ test.o bxml.o
