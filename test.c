@@ -19,7 +19,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "xml.h"
+#include "bxml.h"
 
 void
 print_block(char *block)
@@ -30,17 +30,17 @@ print_block(char *block)
 int
 main()
 {
-	struct xml_ctx *ctx = NULL;
+	struct bxml_ctx *ctx = NULL;
 	char buf[BUFSIZ];
 
-	if ((ctx = xml_ctx_init(print_block)) == false)
+	if ((ctx = bxml_ctx_init(print_block)) == false)
 		return EXIT_FAILURE;
 
 	ctx->block_depth = 1;
 
 	while (feof(stdin) == 0) {
 		fgets(buf, BUFSIZ, stdin);
-		xml_add_str(ctx, buf);
+		bxml_add_str(ctx, buf);
 	}
 
 	return EXIT_SUCCESS;

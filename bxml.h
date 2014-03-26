@@ -14,9 +14,12 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+#ifndef BXML_H
+#define BXML_H
+
 #include <stdbool.h>
 
-enum xml_state {
+enum bxml_state {
 	OUT,			/*		*/
 	IN,			/* <		*/
 	IN_TAG,			/* <  ...	*/
@@ -32,16 +35,18 @@ enum xml_state {
 	IN_QUOTE_ESC		/* <  ... "...\	*/
 };
 
-struct xml_ctx {
+struct bxml_ctx {
 	int depth;
 	int block_depth;
-	enum xml_state status;
+	enum bxml_state status;
 	char *buf;
 	size_t size;
 	unsigned int idx;
 	void (*callback)(char *);
 };
 
-struct xml_ctx *xml_ctx_init(void (*callback)(char *));
-void		xml_ctx_free(struct xml_ctx *ctx);
-bool		xml_add_str (struct xml_ctx *ctx, char *string);
+struct bxml_ctx*bxml_ctx_init(void (*callback)(char *));
+void		bxml_ctx_free(struct bxml_ctx *ctx);
+bool		bxml_add_str (struct bxml_ctx *ctx, char *string);
+
+#endif

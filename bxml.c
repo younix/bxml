@@ -19,12 +19,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "xml.h"
+#include "bxml.h"
 
-struct xml_ctx *
-xml_ctx_init(void (*callback)(char *))
+struct bxml_ctx *
+bxml_ctx_init(void (*callback)(char *))
 {
-	struct xml_ctx *ctx = calloc(1, sizeof *ctx);
+	struct bxml_ctx *ctx = calloc(1, sizeof *ctx);
 
 	ctx->depth = 0;
 	ctx->block_depth = 0;
@@ -41,7 +41,7 @@ xml_ctx_init(void (*callback)(char *))
 }
 
 void
-xml_ctx_free(struct xml_ctx* ctx)
+bxml_ctx_free(struct bxml_ctx* ctx)
 {
 	if (ctx == NULL)
 		return;
@@ -53,7 +53,7 @@ xml_ctx_free(struct xml_ctx* ctx)
 }
 
 bool
-xml_add_str(struct xml_ctx *ctx, char *string)
+bxml_add_str(struct bxml_ctx *ctx, char *string)
 {
 	static char q; /* saves quoting character */
 
