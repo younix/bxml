@@ -42,6 +42,6 @@ struct xml_ctx {
 	void (*callback)(char *);
 };
 
-struct xml_ctx *xml_ctx_init(struct xml_ctx *ctx, void (*callback)(char *));
+struct xml_ctx *xml_ctx_init(void (*callback)(char *));
 void		xml_ctx_free(struct xml_ctx *ctx);
 bool		xml_add_str (struct xml_ctx *ctx, char *string);

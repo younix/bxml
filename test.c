@@ -33,7 +33,7 @@ main()
 	struct xml_ctx *ctx = NULL;
 	char buf[BUFSIZ];
 
-	if (xml_ctx_init(ctx, print_block) == false)
+	if ((ctx = xml_ctx_init(print_block)) == false)
 		return EXIT_FAILURE;
 
 	ctx->block_depth = 1;
@@ -41,7 +41,6 @@ main()
 	while (feof(stdin) == 0) {
 		fgets(buf, BUFSIZ, stdin);
 		xml_add_str(ctx, buf);
-//		printf("ctx-buf: %s\n", ctx.buf);
 	}
 
 	return EXIT_SUCCESS;

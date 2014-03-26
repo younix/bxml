@@ -22,16 +22,17 @@
 #include "xml.h"
 
 struct xml_ctx *
-xml_ctx_init(struct xml_ctx* ctx, void (*callback)(char *))
+xml_ctx_init(void (*callback)(char *))
 {
-	if (ctx == NULL)
-		ctx = calloc(1, sizeof *ctx);
+	struct xml_ctx *ctx = calloc(1, sizeof *ctx);
 
 	ctx->depth = 0;
 	ctx->block_depth = 0;
 	ctx->status = OUT;
-	if ((ctx->buf = calloc(1, BUFSIZ)) == NULL)
-		return false;
+	if ((ctx->buf = calloc(1, BUFSIZ)) == NULL) {
+		free(ctx);
+		return NULL;
+	}
 	ctx->size = BUFSIZ;
 	ctx->idx = 0;
 	ctx->callback = callback;
@@ -56,8 +57,22 @@ xml_add_str(struct xml_ctx *ctx, char *string)
 {
 	static char q; /* saves quoting character */
 
-	printf("str: %s", string);
 	for (char *c = &string[0]; *c != '\0'; c++) {
+
+		/* keep enough space for char and \0 */
+		if (ctx->size - ctx->idx < 2) {
+			char *tmp;
+			if ((tmp = realloc(ctx->buf, ctx->size * 2)) == NULL)
+				return false;
+			ctx->buf = tmp;
+			ctx->size *= 2;
+		}
+
+		/* add current char and terminating \0 to buffer */
+		ctx->buf[ctx->idx] = *c;
+		ctx->idx++;
+		ctx->buf[ctx->idx] = '\0';
+
 		switch (ctx->status) {
 		case OUT:
 			if (*c == '<') ctx->status = IN;
@@ -83,8 +98,10 @@ xml_add_str(struct xml_ctx *ctx, char *string)
 			ctx->depth--;
 		case IN_TAG_SELFCLOSE:
 			if (*c == '>') {
-				if (ctx->depth == ctx->block_depth)
-					fprintf(stderr, "\n");
+				if (ctx->depth == ctx->block_depth) {
+					(*ctx->callback)(ctx->buf);
+					ctx->idx = 0;
+				}
 				ctx->status = OUT;
 			} else {
 				ctx->status = IN_TAG;
@@ -118,17 +135,6 @@ xml_add_str(struct xml_ctx *ctx, char *string)
 			ctx->status = IN_QUOTE;
 			break;
 		}
-
-		if (ctx->size - ctx->idx < 2) { /* enough space for char and \0 */
-			char *tmp;
-			if ((tmp = realloc(ctx->buf, ctx->size * 2)) == NULL)
-				return false;
-			ctx->buf = tmp;
-			ctx->size *= 2;
-		}
-		ctx->buf[ctx->idx] = *c;
-		ctx->idx++;
-		ctx->buf[ctx->idx] = '\0';
 	}
 
 	return true;
