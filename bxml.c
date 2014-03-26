@@ -24,7 +24,13 @@
 struct bxml_ctx *
 bxml_ctx_init(void (*callback)(char *))
 {
-	struct bxml_ctx *ctx = calloc(1, sizeof *ctx);
+	struct bxml_ctx *ctx;
+
+	if (callback == NULL)
+		return NULL;
+
+	if ((ctx = calloc(1, sizeof *ctx)) == NULL)
+		return NULL;
 
 	ctx->depth = 0;
 	ctx->block_depth = 0;
