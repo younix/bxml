@@ -40,7 +40,7 @@ main()
 
 	while (feof(stdin) == 0) {
 		fgets(buf, BUFSIZ, stdin);
-		bxml_add_str(ctx, buf);
+		bxml_add_buf(ctx, buf, strlen(buf));
 	}
 
 	return EXIT_SUCCESS;

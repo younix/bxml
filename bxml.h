@@ -49,6 +49,6 @@ struct bxml_ctx {
 
 struct bxml_ctx*bxml_ctx_init(void (*callback)(char *, void *data), void *data);
 void		bxml_ctx_free(struct bxml_ctx *ctx);
-bool		bxml_add_str (struct bxml_ctx *ctx, const char *string);
+bool		bxml_add_buf(struct bxml_ctx *ctx, const char *buf, size_t len);
 
 #endif

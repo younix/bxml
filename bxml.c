@@ -60,11 +60,11 @@ bxml_ctx_free(struct bxml_ctx* ctx)
 }
 
 bool
-bxml_add_str(struct bxml_ctx *ctx, const char *string)
+bxml_add_buf(struct bxml_ctx *ctx, const char *buf, size_t len)
 {
 	static char q; /* saves quoting character */
 
-	for (const char *c = &string[0]; *c != '\0'; c++) {
+	for (const char *c = buf; c < buf + len; c++) {
 
 		/* keep enough space for char and \0 */
 		if (ctx->size - ctx->idx < 2) {
