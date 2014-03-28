@@ -41,12 +41,14 @@ struct bxml_ctx {
 	enum bxml_state status;
 	char *buf;
 	size_t size;
-	unsigned int idx;
-	void (*callback)(char *);
+	uint64_t idx;
+	uint64_t start_idx;
+	void (*callback)(char *, void *);
+	void *data;
 };
 
-struct bxml_ctx*bxml_ctx_init(void (*callback)(char *));
+struct bxml_ctx*bxml_ctx_init(void (*callback)(char *, void *data), void *data);
 void		bxml_ctx_free(struct bxml_ctx *ctx);
-bool		bxml_add_str (struct bxml_ctx *ctx, char *string);
+bool		bxml_add_str (struct bxml_ctx *ctx, const char *string);
 
 #endif

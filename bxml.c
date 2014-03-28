@@ -22,7 +22,7 @@
 #include "bxml.h"
 
 struct bxml_ctx *
-bxml_ctx_init(void (*callback)(char *))
+bxml_ctx_init(void (*callback)(char *, void *data), void *data)
 {
 	struct bxml_ctx *ctx;
 
@@ -42,6 +42,7 @@ bxml_ctx_init(void (*callback)(char *))
 	ctx->size = BUFSIZ;
 	ctx->idx = 0;
 	ctx->callback = callback;
+	ctx->data = data;
 
 	return ctx;
 }
@@ -59,11 +60,11 @@ bxml_ctx_free(struct bxml_ctx* ctx)
 }
 
 bool
-bxml_add_str(struct bxml_ctx *ctx, char *string)
+bxml_add_str(struct bxml_ctx *ctx, const char *string)
 {
 	static char q; /* saves quoting character */
 
-	for (char *c = &string[0]; *c != '\0'; c++) {
+	for (const char *c = &string[0]; *c != '\0'; c++) {
 
 		/* keep enough space for char and \0 */
 		if (ctx->size - ctx->idx < 2) {
@@ -77,11 +78,14 @@ bxml_add_str(struct bxml_ctx *ctx, char *string)
 		/* add current char and terminating \0 to buffer */
 		ctx->buf[ctx->idx] = *c;
 		ctx->idx++;
-		ctx->buf[ctx->idx] = '\0';
 
 		switch (ctx->status) {
 		case OUT:
-			if (*c == '<') ctx->status = IN;
+			if (*c == '<') {
+				ctx->status = IN;
+				if (ctx->depth == ctx->block_depth)
+					ctx->start_idx = ctx->idx - 1;
+			}
 			break;
 		case IN:
 			switch (*c) {
@@ -105,8 +109,10 @@ bxml_add_str(struct bxml_ctx *ctx, char *string)
 		case IN_TAG_SELFCLOSE:
 			if (*c == '>') {
 				if (ctx->depth == ctx->block_depth) {
-					(*ctx->callback)(ctx->buf);
-					ctx->idx = 0;
+					char *buf = &ctx->buf[ctx->start_idx];
+					ctx->buf[ctx->idx] = '\0';
+					(*ctx->callback)(buf, ctx->data);
+					ctx->idx = ctx->start_idx = 0;
 				}
 				ctx->status = OUT;
 			} else {

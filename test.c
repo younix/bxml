@@ -22,7 +22,7 @@
 #include "bxml.h"
 
 void
-print_block(char *block)
+print_block(char *block, void *data)
 {
 	printf("BLOCK: %s\n\n", block);
 }
@@ -33,7 +33,7 @@ main()
 	struct bxml_ctx *ctx = NULL;
 	char buf[BUFSIZ];
 
-	if ((ctx = bxml_ctx_init(print_block)) == false)
+	if ((ctx = bxml_ctx_init(print_block, NULL)) == false)
 		return EXIT_FAILURE;
 
 	ctx->block_depth = 1;
