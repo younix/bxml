@@ -18,6 +18,7 @@
 #define BXML_H
 
 #include <stdbool.h>
+#include <stdint.h>
 
 enum bxml_state {
 	OUT,			/*		*/
