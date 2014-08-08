@@ -1,4 +1,5 @@
-CFLAGS := -std=c99 -pedantic -Wall -Wextra -g -Wno-unused
+CC 	?= cc
+CFLAGS	:= -std=c99 -pedantic -Wall -Wextra -g -Wno-unused-parameter
 
 include Makefile.inc
 
@@ -8,7 +9,7 @@ include Makefile.inc
 test.o: test.c bxml.h
 
 .c.o:
-	gcc $(CFLAGS) -O3 -c -o $@ $<
+	$(CC) $(CFLAGS) -O3 -c -o $@ $<
 
 clean:
 	rm -f test *.o *.core
