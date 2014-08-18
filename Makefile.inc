@@ -1,4 +1,7 @@
-test: test.o bxml.o
-	$(CC) -o $@ test.o bxml.o
+test: test.o bxml.o libbxml.a
+	$(CC) -o $@ test.o -L. -lbxml
+
+libbxml.a: bxml.o
+	ar rcs $@ bxml.o
 
 bxml.o: bxml.c bxml.h
